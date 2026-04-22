@@ -85,16 +85,19 @@ drop policy if exists jobs_owner_insert      on public.jobs;
 drop policy if exists jobs_owner_update      on public.jobs;
 drop policy if exists jobs_admin_all         on public.jobs;
 
+-- Any authenticated user can browse approved jobs (pending users can explore)
 create policy jobs_approved_read on public.jobs
-  for select using (public.is_approved() and status = 'approved');
+  for select using (auth.uid() is not null and status = 'approved');
 
 create policy jobs_owner_read on public.jobs
   for select using (auth.uid() = posted_by);
 
+-- Any authenticated partner (pending or approved) can post jobs.
+-- Jobs always start at status='pending', so admin review gates visibility.
 create policy jobs_owner_insert on public.jobs
   for insert with check (
     auth.uid() = posted_by
-    and public.is_approved()
+    and auth.uid() is not null
     and (select role from public.users where id = auth.uid()) in ('partner','admin')
   );
 
@@ -116,10 +119,10 @@ drop policy if exists apps_admin_all     on public.applications;
 create policy apps_editor_read on public.applications
   for select using (auth.uid() = editor_id);
 
+-- Any authenticated editor can apply (pending editors can apply too)
 create policy apps_editor_insert on public.applications
   for insert with check (
     auth.uid() = editor_id
-    and public.is_approved()
     and (select role from public.users where id = auth.uid()) = 'editor'
   );
 
