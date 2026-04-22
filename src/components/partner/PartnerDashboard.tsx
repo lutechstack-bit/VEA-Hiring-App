@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useMyPostings } from '@/hooks/useJobs'
 import { useApplicants } from '@/hooks/useApplications'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { PendingBanner } from '@/components/shared/PendingBanner'
 import { MetricCard } from '@/components/shared/MetricCard'
 import { Card } from '@/components/shared/Card'
 import { EyebrowLabel } from '@/components/shared/EyebrowLabel'
@@ -31,6 +32,7 @@ export function PartnerDashboard() {
 
   return (
     <div className="space-y-8">
+      <PendingBanner role="partner" />
       <PageHeader
         eyebrow="Your dashboard"
         title={`Hello, ${user?.name?.split(' ')[0] ?? 'partner'}`}

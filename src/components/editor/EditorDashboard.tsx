@@ -18,6 +18,7 @@ import { JumpBackIn } from './JumpBackIn'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { EyebrowLabel } from '@/components/shared/EyebrowLabel'
 import { Card } from '@/components/shared/Card'
+import { PendingBanner } from '@/components/shared/PendingBanner'
 import { timeAgo } from '@/lib/utils'
 
 export function EditorDashboard() {
@@ -35,6 +36,7 @@ export function EditorDashboard() {
 
   return (
     <div className="space-y-8">
+      <PendingBanner role="editor" />
       <PageHeader
         eyebrow="Your dashboard"
         title={`Welcome back, ${user?.name?.split(' ')[0] ?? 'editor'}`}

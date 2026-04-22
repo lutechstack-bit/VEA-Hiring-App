@@ -28,8 +28,11 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
     )
   }
 
-  if (user.status !== 'approved') {
-    return <PendingApprovalScreen status={user.status} />
+  // Rejected users see a dedicated screen — they cannot access the app.
+  // Pending users CAN access the dashboard so they can complete their profile
+  // before the admin reviews and approves them.
+  if (user.status === 'rejected') {
+    return <PendingApprovalScreen status="rejected" />
   }
 
   return <>{children}</>
