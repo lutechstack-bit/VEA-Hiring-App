@@ -14,40 +14,19 @@ if (!SUPABASE_CONFIGURED) {
   )
 }
 
-// Custom lock that falls back to a simple queued mutex when navigator.locks
-// is unavailable or when a stale lock is detected (e.g. after HMR reloads or
-// a hard-refresh mid-auth-operation). This prevents indefinite hangs.
+// In-memory sequential mutex — intentionally avoids navigator.locks.
+//
+// navigator.locks entries survive hard-refreshes and tab crashes, leaving
+// zombie locks that block every subsequent auth call indefinitely. An
+// in-memory queue resets on every page load so zombie locks are impossible.
+// The only downside is no cross-tab coordination, which is an acceptable
+// trade-off: the session auto-heals via the refresh-token on the next load.
 let _lockQueue = Promise.resolve()
-async function reliableLock<T>(
+function reliableLock<T>(
   _name: string,
-  acquireTimeout: number,
+  _acquireTimeout: number,
   fn: () => Promise<T>,
 ): Promise<T> {
-  // If navigator.locks is available and working, use it with a timeout guard
-  if (typeof navigator !== 'undefined' && navigator.locks) {
-    const result = await Promise.race([
-      new Promise<T>((resolve, reject) => {
-        navigator.locks
-          .request(_name, { mode: 'exclusive' }, async () => {
-            try {
-              resolve(await fn())
-            } catch (e) {
-              reject(e)
-            }
-          })
-          .catch(reject)
-      }),
-      new Promise<T>((_, reject) =>
-        setTimeout(
-          () => reject(new Error(`Lock "${_name}" timed out after ${acquireTimeout}ms`)),
-          acquireTimeout > 0 ? acquireTimeout : 5000,
-        ),
-      ),
-    ])
-    return result
-  }
-
-  // Fallback: simple promise queue (no true mutex, but prevents double-run)
   return new Promise<T>((resolve, reject) => {
     _lockQueue = _lockQueue.then(() => fn().then(resolve, reject))
   })
