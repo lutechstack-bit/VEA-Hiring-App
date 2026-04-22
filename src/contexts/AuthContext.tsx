@@ -45,19 +45,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    let cancelled = false
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (cancelled) return
-      setSession(data.session)
-      await loadUser(data.session?.user.id)
-      setLoading(false)
-    })
+    let initialised = false
+
+    // onAuthStateChange fires immediately with INITIAL_SESSION, so we use
+    // that as the single source of truth and skip the separate getSession call
+    // to avoid two simultaneous auth-lock acquisitions.
     const { data: sub } = supabase.auth.onAuthStateChange(async (_evt, next) => {
       setSession(next)
       await loadUser(next?.user.id)
+      if (!initialised) {
+        initialised = true
+        setLoading(false)
+      }
     })
+
     return () => {
-      cancelled = true
       sub.subscription.unsubscribe()
     }
   }, [loadUser])
