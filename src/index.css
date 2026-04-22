@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    font-family:
+      'Satoshi',
+      'Inter',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background-color: #0a0a0f;
+  }
+
+  body {
+    @apply bg-background-primary text-text-primary;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0f;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.4);
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(139, 92, 246, 0.35);
+    color: #fafafa;
+  }
+
+  /* Focus */
+  :focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply bg-background-tertiary;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.2em] text-text-muted font-medium;
+  }
+
+  .surface-card {
+    @apply bg-background-secondary border border-white/[0.06] rounded-xl transition-all duration-300;
+  }
+  .surface-card:hover {
+    @apply border-brand-purple/30 shadow-glow-md;
+  }
+
+  .btn-gradient {
+    @apply inline-flex items-center justify-center gap-2 bg-gradient-to-r from-brand-purple to-brand-purpleLight
+           hover:from-brand-purpleDeep hover:to-brand-purple hover:shadow-glow-sm
+           text-white font-medium rounded-lg px-4 py-2.5 transition-all duration-200
+           disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 bg-white/[0.03] hover:bg-white/[0.06]
+           border border-white/[0.08] hover:border-brand-purple/30
+           text-text-primary rounded-lg px-4 py-2.5 transition-all duration-200;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 bg-transparent hover:bg-brand-purple/10
+           border border-brand-purple/30 text-brand-purpleLight rounded-lg px-4 py-2.5
+           transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full bg-background-tertiary border border-white/[0.08] focus:border-brand-purple/60
+           rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted
+           outline-none transition-colors;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.06]
+           rounded-full px-2.5 py-1 text-xs text-text-secondary;
+  }
+
+  .chip-purple {
+    @apply inline-flex items-center gap-1.5 bg-brand-purple/10 border border-brand-purple/20
+           rounded-full px-2.5 py-1 text-xs text-brand-purpleLight;
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(139, 92, 246, 0.08) 200px,
+      rgba(255, 255, 255, 0.03) 400px
+    );
+    background-size: 800px 100%;
+    @apply animate-shimmer rounded-md;
+  }
+
+  .page-hero {
+    background-image: radial-gradient(
+      ellipse 800px 500px at 50% -10%,
+      rgba(139, 92, 246, 0.15),
+      transparent 60%
+    );
+  }
+}
